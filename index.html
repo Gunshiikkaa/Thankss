@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thank You for Murdoku!</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Playfair Display & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,700;1,400;1,600&family=Caveat:wght@600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #fff7f9;
+      color: #334155;
+    }
+    .font-serif-title {
+      font-family: 'Cinzel', serif;
+    }
+    .font-editorial {
+      font-family: 'Playfair Display', serif;
+    }
+    .font-handwriting {
+      font-family: 'Caveat', cursive;
+    }
+    /* Subtle 3D Book perspective */
+    .book-container {
+      perspective: 1200px;
+    }
+    .book-cover {
+      transform: rotateY(-18deg) rotateX(6deg);
+      transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.6s ease;
+      box-shadow: -15px 20px 35px rgba(244, 114, 182, 0.25), -2px 0 10px rgba(251, 113, 133, 0.15);
+    }
+    .book-container:hover .book-cover {
+      transform: rotateY(-5deg) rotateX(2deg) translateY(-8px);
+      box-shadow: -20px 25px 45px rgba(244, 114, 182, 0.35), 0 0 25px rgba(244, 63, 94, 0.2);
+    }
+    /* Book spine simulation */
+    .book-cover::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 22px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.1) 60%, rgba(244,114,182,0.25) 100%);
+      pointer-events: none;
+    }
+    /* Soft Textured Letter Paper */
+    .letter-paper {
+      background-color: #ffffff;
+      background-image: radial-gradient(#fbcfe8 0.75px, transparent 0.75px), radial-gradient(#fbcfe8 0.75px, #ffffff 0.75px);
+      background-size: 28px 28px;
+      background-position: 0 0, 14px 14px;
+    }
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 0.45; transform: scale(1); }
+      50% { opacity: 0.75; transform: scale(1.08); }
+    }
+    .glow-bg {
+      animation: pulseGlow 7s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body class="min-h-screen relative overflow-x-hidden bg-gradient-to-b from-pink-50 via-rose-50/40 to-white selection:bg-pink-400 selection:text-white">
+
+  <!-- Ambient Light Orbs in Soft Pink -->
+  <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+    <div class="glow-bg absolute -top-40 -left-40 w-96 h-96 rounded-full bg-pink-200/50 blur-[110px]"></div>
+    <div class="glow-bg absolute top-1/2 -right-40 w-[450px] h-[450px] rounded-full bg-rose-200/40 blur-[130px]" style="animation-delay: -3s;"></div>
+    <div class="glow-bg absolute bottom-10 left-1/3 w-80 h-80 rounded-full bg-pink-100/60 blur-[100px]" style="animation-delay: -5s;"></div>
+  </div>
+
+  <!-- Confetti Canvas -->
+  <canvas id="confettiCanvas" class="fixed inset-0 pointer-events-none z-50"></canvas>
+
+  <header class="relative z-10 w-full max-w-6xl mx-auto px-6 py-6 flex items-center justify-between border-b border-pink-200/70 bg-white/60 backdrop-blur-md rounded-b-2xl mt-0">
+    <div class="flex items-center space-x-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-pink-500 to-rose-400 flex items-center justify-center shadow-md shadow-pink-300/40">
+        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+        </svg>
+      </div>
+      <div>
+        <span class="font-serif-title tracking-wider text-xs sm:text-sm text-pink-700 font-bold block">GRATITUDE NOTE</span>
+        <span class="text-xs text-pink-500 font-medium">From Gunzu to cutupie &bull; Murdoku Mystery</span>
+      </div>
+    </div>
+
+    <div class="flex items-center space-x-3">
+      <button id="soundToggle" onclick="toggleAudio()" class="px-3.5 py-1.5 rounded-full text-xs font-medium border border-pink-200 hover:border-pink-400 text-pink-700 hover:text-pink-900 transition-all flex items-center gap-2 bg-white/80 shadow-sm backdrop-blur-sm">
+        <svg id="soundIcon" class="w-4 h-4 text-pink-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+        </svg>
+        <span id="soundText">Sound: ON</span>
+      </button>
+
+      <button onclick="launchCelebration()" class="px-4 py-1.5 rounded-full text-xs font-semibold bg-gradient-to-r from-pink-500 via-rose-500 to-pink-500 hover:from-pink-600 hover:to-rose-600 text-white font-bold shadow-md shadow-pink-300/50 active:scale-95 transition-all flex items-center gap-1.5">
+        <span>🎉 Send Confetti</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="relative z-10 max-w-6xl mx-auto px-6 pt-10 pb-20">
+    
+    <!-- Hero Banner Text -->
+    <div class="text-center max-w-3xl mx-auto mb-14">
+      <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-pink-100 border border-pink-300 text-pink-700 text-xs font-semibold uppercase tracking-widest mb-4 shadow-sm">
+        <span class="w-2 h-2 rounded-full bg-pink-500 animate-ping"></span>
+        A Most Thoughtful Mystery Gift
+      </div>
+      <h1 class="font-editorial text-4xl sm:text-6xl font-bold tracking-tight text-slate-900 leading-tight">
+        You Just Made My Day: <br>
+        <span class="bg-gradient-to-r from-pink-600 via-rose-500 to-pink-600 bg-clip-text text-transparent">Thank You for "Murdoku"!</span>
+      </h1>
+      <p class="mt-4 text-slate-600 text-base sm:text-lg max-w-xl mx-auto">
+        Nothing beats the joy of receiving the exact book you've been yearning to solve. Here's a tribute to your unmatched gift-giving prowess.
+      </p>
+    </div>
+
+    <!-- 2-Column Showcase: 3D Book on Left, Interactive Letter on Right -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+      
+      <div class="lg:col-span-5 flex flex-col items-center">
+        <!-- 3D Book Container -->
+        <div class="book-container w-64 sm:w-72 relative">
+          <!-- Ribbon Bookmark hanging from book -->
+          <div class="absolute -top-3 right-10 w-5 h-20 bg-rose-500 shadow-md z-20 rounded-b-sm border-b border-rose-700 transform origin-top rotate-2"></div>
+          
+          <!-- The Book: White & Soft Pink Special Edition -->
+          <div class="book-cover relative w-full aspect-[2/3] bg-gradient-to-br from-white via-pink-50 to-rose-100 rounded-r-2xl rounded-l-md border-r-4 border-t-2 border-b-4 border-l-8 border-pink-200 text-slate-800 p-6 flex flex-col justify-between overflow-hidden cursor-pointer select-none" onclick="inspectBook()">
+            
+            <!-- Book Spine crease line -->
+            <div class="absolute left-4 top-0 bottom-0 w-[2px] bg-pink-200/80 shadow-inner"></div>
+
+            <!-- Mystery Sudoku Grid background pattern on cover -->
+            <div class="absolute inset-0 opacity-15 pointer-events-none p-8 flex flex-col justify-between font-mono text-[9px] text-pink-700">
+              <div class="grid grid-cols-3 gap-2 border border-pink-400 p-2">
+                <div>5 3 .</div><div>6 . .</div><div>. 9 8</div>
+                <div>. 7 .</div><div>1 9 5</div><div>. . .</div>
+                <div>. . .</div><div>. . .</div><div>. 6 .</div>
+              </div>
+              <div class="text-right tracking-widest text-[8px] uppercase font-bold text-pink-700">MURDER // DEDUCTION // LOGIC</div>
+            </div>
+
+            <!-- Top Tagline -->
+            <div class="relative z-10 pt-2 pl-4">
+              <span class="text-[10px] uppercase font-bold tracking-[0.25em] text-pink-600 block">The Puzzle Thriller</span>
+              <div class="w-12 h-0.5 bg-pink-400 mt-1"></div>
+            </div>
+
+            <!-- Center Book Title & Icon -->
+            <div class="relative z-10 text-center my-auto px-2">
+              <div class="w-14 h-14 mx-auto mb-3 rounded-full bg-pink-500 text-white flex items-center justify-center shadow-lg shadow-pink-300/60 border border-white">
+                <!-- Magnifying glass with dagger crosshair -->
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m-3-3h6" />
+                </svg>
+              </div>
+              <h2 class="font-serif-title text-3xl font-extrabold tracking-wider text-pink-900 leading-none drop-shadow-sm">
+                MURDOKU
+              </h2>
+              <p class="text-[11px] font-semibold text-pink-600 tracking-widest mt-1.5 uppercase">Solve The Crime. Fill The Grid.</p>
+            </div>
+
+            <!-- Bottom Accents -->
+            <div class="relative z-10 pl-4 flex items-end justify-between border-t border-pink-200/80 pt-3">
+              <div>
+                <span class="text-[9px] uppercase tracking-wider text-slate-500 font-semibold block">Status:</span>
+                <span class="text-xs font-semibold text-rose-600 flex items-center gap-1">
+                  <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span> In My Hands!
+                </span>
+              </div>
+              <span class="text-[10px] text-pink-700 font-mono font-bold tracking-tight bg-pink-100/90 px-2 py-0.5 rounded">#1 FAVOURITE</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Book interaction hint -->
+        <p class="text-xs text-pink-600 font-medium mt-4 flex items-center gap-1.5">
+          <svg class="w-4 h-4 text-pink-500 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
+          </svg>
+          Click the book cover to flip its crime clue!
+        </p>
+
+        <!-- Clue reveal box -->
+        <div id="clueCard" class="mt-4 w-full max-w-xs bg-white/95 border border-pink-200 rounded-2xl p-4 backdrop-blur-md text-center shadow-lg shadow-pink-100 transition-all duration-300">
+          <span class="text-[10px] uppercase font-bold tracking-wider text-pink-600 block mb-1">🔍 Detective's Note</span>
+          <p id="clueText" class="text-xs text-slate-700 italic font-medium">"Suspect identified: cutupie! Verdict: Guilty of giving Gunzu the best gift ever."</p>
+        </div>
+      </div>
+
+      <div class="lg:col-span-7">
+        <div class="letter-paper rounded-3xl p-7 sm:p-10 shadow-2xl shadow-pink-200/50 text-slate-800 relative overflow-hidden border border-pink-200">
+          
+          <!-- Wax Seal Stamp graphic in Rose/Pink -->
+          <div class="absolute -top-3 -right-3 sm:top-5 sm:right-6 w-16 h-16 rounded-full bg-gradient-to-br from-pink-500 via-rose-500 to-rose-600 shadow-lg shadow-pink-400/50 border-2 border-pink-200 flex items-center justify-center transform rotate-12 select-none pointer-events-none">
+            <span class="font-serif-title font-bold text-white text-xs text-center leading-none">THANK<br>YOU</span>
+          </div>
+
+          <!-- Letter Meta Header -->
+          <div class="border-b border-pink-200 pb-4 mb-6">
+            <div class="flex items-center justify-between">
+              <span class="font-mono text-xs uppercase tracking-widest text-pink-600/80 font-bold block">EVIDENCE NO. #001 &bull; SPECIAL DELIVERY</span>
+              <span class="text-xs font-mono font-bold px-3 py-1 rounded-full bg-pink-100 text-pink-700 border border-pink-300">FOR CUTUPIE</span>
+            </div>
+            <h3 class="font-editorial text-2xl sm:text-3xl font-bold text-slate-900 mt-2">Dearest Cutupie,</h3>
+          </div>
+
+          <!-- Letter Body -->
+          <div class="space-y-4 text-slate-700 text-sm sm:text-base leading-relaxed">
+            <p>
+              I genuinely cannot thank you enough for getting me <strong class="text-pink-900 font-semibold underline decoration-pink-400 decoration-2">"Murdoku"</strong>! When I saw it was my favorite book, my heart did a complete happy flip.
+            </p>
+            <p>
+              You already know how much I obsess over tricky murder mysteries and devious puzzles, so bringing them together in this exact book was the sweetest, most thoughtful surprise ever. You didn't just pick out a book—you gave me hours of thrilling deduction, cozy evenings, and crime mysteries that I can't wait to crack open.
+            </p>
+            <p>
+              Having someone like you who pays attention to the little things that make me light up means the absolute world to me.
+            </p>
+          </div>
+
+          <!-- Handwritten Sign-off -->
+          <div class="mt-8 pt-6 border-t border-pink-200 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+            <div>
+              <p class="text-xs font-mono uppercase text-pink-600/80 font-medium tracking-wider">With endless love & sharp pencils,</p>
+              <p class="font-handwriting text-3xl sm:text-4xl text-rose-600 mt-1">Gunzu 🕵️‍♂️❤️</p>
+            </div>
+            
+            <!-- Quick reaction buttons -->
+            <div class="flex items-center gap-2">
+              <button onclick="triggerLoveReact()" class="px-3.5 py-2 rounded-xl bg-pink-50 hover:bg-pink-100 border border-pink-200 text-pink-700 text-xs font-semibold transition-all active:scale-90 flex items-center gap-1.5 shadow-sm">
+                <span>❤️</span> <span id="reactCount">Send Love (12)</span>
+              </button>
+              <button onclick="copyGratitudeMessage()" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700 text-white text-xs font-semibold transition-all active:scale-90 flex items-center gap-1.5 shadow-sm shadow-pink-300/40">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                </svg>
+                <span id="copyBtnText">Copy Note</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6">
+      
+      <!-- Card 1 -->
+      <div class="p-6 rounded-2xl bg-white/90 border border-pink-200/80 hover:border-pink-400 transition-all duration-300 shadow-md shadow-pink-100 group">
+        <div class="w-10 h-10 rounded-xl bg-pink-100 text-pink-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+          🧩
+        </div>
+        <h4 class="font-serif-title text-base font-bold text-slate-800">Brain on Fire</h4>
+        <p class="text-xs text-slate-600 mt-2 leading-relaxed">
+          Every number is a suspect; every 3x3 square is a crime scene. Can't wait to grab a cup of coffee and unravel the mind-bending puzzles.
+        </p>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="p-6 rounded-2xl bg-white/90 border border-pink-200/80 hover:border-pink-400 transition-all duration-300 shadow-md shadow-pink-100 group">
+        <div class="w-10 h-10 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+          🎁
+        </div>
+        <h4 class="font-serif-title text-base font-bold text-slate-800">Thoughtful Level: 100</h4>
+        <p class="text-xs text-slate-600 mt-2 leading-relaxed">
+          It's rare when someone truly pays attention to what you love. You nailed this gift with deadly accuracy!
+        </p>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="p-6 rounded-2xl bg-white/90 border border-pink-200/80 hover:border-pink-400 transition-all duration-300 shadow-md shadow-pink-100 group">
+        <div class="w-10 h-10 rounded-xl bg-pink-100 text-pink-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+          🔖
+        </div>
+        <h4 class="font-serif-title text-base font-bold text-slate-800">The Pact</h4>
+        <p class="text-xs text-slate-600 mt-2 leading-relaxed">
+          Whenever I reach the final grand reveal case, you'll be the very first person I call with my victory report.
+        </p>
+      </div>
+
+    </div>
+
+    <!-- Notification Toast Modal -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none bg-white border border-pink-300 shadow-2xl shadow-pink-200 rounded-2xl px-5 py-3.5 flex items-center gap-3">
+      <div class="w-2.5 h-2.5 rounded-full bg-pink-500 animate-ping"></div>
+      <p id="toastMessage" class="text-xs font-semibold text-slate-800">Action performed!</p>
+    </div>
+
+  </main>
+
+  <script>
+    // Audio Context for sweet synthesized chimes (zero external URLs)
+    let audioCtx = null;
+    let soundEnabled = true;
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    }
+
+    function playChime(freq = 587.33, type = 'sine', duration = 0.4) {
+      if (!soundEnabled) return;
+      try {
+        initAudio();
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+        // Gentle envelope
+        gain.gain.setValueAtTime(0.01, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.18, audioCtx.currentTime + 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {
+        console.warn('Audio error handled:', e);
+      }
+    }
+
+    function playChord() {
+      if (!soundEnabled) return;
+      // Play a lovely major triad (D major: D5, F#5, A5, D6)
+      const notes = [587.33, 739.99, 880.00, 1174.66];
+      notes.forEach((freq, idx) => {
+        setTimeout(() => playChime(freq, 'sine', 0.6), idx * 80);
+      });
+    }
+
+    function toggleAudio() {
+      soundEnabled = !soundEnabled;
+      const text = document.getElementById('soundText');
+      const icon = document.getElementById('soundIcon');
+      if (soundEnabled) {
+        text.innerText = 'Sound: ON';
+        icon.classList.remove('text-slate-400');
+        icon.classList.add('text-pink-500');
+        playChime(659.25, 'sine', 0.2);
+        showToast('Sound enabled 🔔');
+      } else {
+        text.innerText = 'Sound: OFF';
+        icon.classList.remove('text-pink-500');
+        icon.classList.add('text-slate-400');
+        showToast('Sound muted 🔕');
+      }
+    }
+
+    // Clues pool to inspect the book
+    const clues = [
+      `"Suspect identified: cutupie! Verdict: Guilty of giving Gunzu the best gift ever."`,
+      `"Alibi checked out: cutupie was busy being the sweetest person on earth."`,
+      `"Grid analysis complete: 100% matched with Gunzu's favorite book wishlist!"`,
+      `"Case File #001: Sentenced to infinite hugs, gratitude, and warm cuddles."`,
+      `"Forensic report: Cutupie knows Gunzu better than anyone else! ❤️"`
+    ];
+    let currentClueIdx = 0;
+
+    function inspectBook() {
+      currentClueIdx = (currentClueIdx + 1) % clues.length;
+      const clueBox = document.getElementById('clueText');
+      clueBox.style.opacity = '0';
+      playChime(440, 'triangle', 0.3);
+      setTimeout(() => {
+        clueBox.innerText = clues[currentClueIdx];
+        clueBox.style.opacity = '1';
+      }, 150);
+      showToast('New case file unlocked! 🔍');
+    }
+
+    // Love React Counter
+    let loveCount = 12;
+    function triggerLoveReact() {
+      loveCount++;
+      document.getElementById('reactCount').innerText = `Send Love (${loveCount})`;
+      playChime(880, 'sine', 0.3);
+      showToast('Sent a warm hug & gratitude! ❤️');
+      launchConfettiBurst(window.innerWidth * 0.7, window.innerHeight * 0.6);
+    }
+
+    // Copy thank you note
+    function copyGratitudeMessage() {
+      const text = "Dearest cutupie, thank you so much for getting me my favourite book, Murdoku! You know me so well and this made my entire week! With all my love, Gunzu 🕵️‍♂️❤️";
+      
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      textArea.style.position = "fixed";
+      textArea.style.left = "-9999px";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      
+      try {
+        document.execCommand('copy');
+        document.getElementById('copyBtnText').innerText = "Copied!";
+        showToast('Thank-you message copied to clipboard! 📋');
+        playChord();
+        setTimeout(() => {
+          document.getElementById('copyBtnText').innerText = "Copy Note";
+        }, 2000);
+      } catch (err) {
+        showToast('Could not copy automatically.');
+      }
+      document.body.removeChild(textArea);
+    }
+
+    // Toast notification
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const text = document.getElementById('toastMessage');
+      text.innerText = msg;
+      toast.classList.remove('translate-y-24', 'opacity-0', 'pointer-events-none');
+      setTimeout(() => {
+        toast.classList.add('translate-y-24', 'opacity-0', 'pointer-events-none');
+      }, 2600);
+    }
+
+    const canvas = document.getElementById('confettiCanvas');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class Particle {
+      constructor(x, y) {
+        this.x = x;
+        this.y = y;
+        this.size = Math.random() * 8 + 4;
+        this.color = ['#f43f5e', '#fb7185', '#fda4af', '#f472b6', '#ec4899', '#ffffff', '#fed7aa'][Math.floor(Math.random() * 7)];
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 10 + 3;
+        this.vx = Math.cos(angle) * speed;
+        this.vy = Math.sin(angle) * speed - 3;
+        this.gravity = 0.28;
+        this.rotation = Math.random() * 360;
+        this.rotSpeed = Math.random() * 10 - 5;
+        this.opacity = 1;
+      }
+      update() {
+        this.vy += this.gravity;
+        this.x += this.vx;
+        this.y += this.vy;
+        this.rotation += this.rotSpeed;
+        this.opacity -= 0.012;
+      }
+      draw() {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate((this.rotation * Math.PI) / 180);
+        ctx.globalAlpha = Math.max(this.opacity, 0);
+        ctx.fillStyle = this.color;
+        ctx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size * 0.6);
+        ctx.restore();
+      }
+    }
+
+    function launchConfettiBurst(x, y) {
+      for (let i = 0; i < 40; i++) {
+        particles.push(new Particle(x, y));
+      }
+    }
+
+    function launchCelebration() {
+      playChord();
+      launchConfettiBurst(window.innerWidth * 0.3, window.innerHeight * 0.4);
+      launchConfettiBurst(window.innerWidth * 0.7, window.innerHeight * 0.4);
+      showToast('Hooray for Murdoku! 🥳');
+    }
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.update();
+        p.draw();
+        if (p.opacity <= 0 || p.y > canvas.height) {
+          particles.splice(i, 1);
+        }
+      }
+      requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+
+    // Auto-launch subtle celebration on page entrance
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        launchConfettiBurst(window.innerWidth / 2, window.innerHeight * 0.35);
+      }, 600);
+    });
+  </script>
+</body>
+</html>
